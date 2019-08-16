@@ -19,8 +19,7 @@ const userSchema = mongoose.Schema({
         required: true
     },
     avatarUrl: {
-        type: String,
-        required: true
+        type: String
     },
     events: [{
         type: mongoose.Schema.Types.ObjectId,
