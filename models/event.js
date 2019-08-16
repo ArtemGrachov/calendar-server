@@ -45,7 +45,26 @@ eventSchema.methods = {
             color: this.color,
             users: this.users
         }
+    },
+    async addUser(userId) {
+
+    },
+    async removeUser(userId) {
+
     }
 }
+
+eventSchema.pre('save', async function() {
+    if (this.isNew) {
+        const user = await this.model('User')
+            .findById(this.owner);
+
+        await user.updateOne({
+            $addToSet: {
+                'events': this._id
+            }
+        })
+    }
+})
 
 module.exports = mongoose.model('Event', eventSchema);
