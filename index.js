@@ -22,11 +22,13 @@ const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
 const eventsRoutes = require('./routes/events');
 const userRoutes = require('./routes/user');
+const notificationsController = require('./routes/notifications');
 
 app.use(authMiddleware);
 app.use('/auth', authRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
+app.use('/notifications', notificationsController);
 
 app.use((err, req, res, next) => {
     console.log(err);

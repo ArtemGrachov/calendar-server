@@ -24,6 +24,10 @@ const userSchema = mongoose.Schema({
     events: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
+    }],
+    notifications: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Notification'
     }]
 });
 
@@ -58,7 +62,21 @@ userSchema.methods = {
                 'events': eventId
             }
         })
-    }
+    },
+    async addNotification(notificationId) {
+        await this.updateOne({
+            $addToSet: {
+                'notifications': notificationId
+            }
+        })
+    },
+    async removeNotification(notificationId) {
+        await this.updateOne({
+            $pull: {
+                'notifications': notificationId
+            }
+        })
+    },
 }
 
 userSchema.pre('remove', async function() {

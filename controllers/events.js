@@ -1,5 +1,6 @@
 const Event = require('../models/event');
 const User = require('../models/user');
+const Notification = require('../models/notification');
 const errorFactory = require('../utils/error-factory');
 const errors = require('../configs/errors');
 
@@ -137,6 +138,24 @@ exports.updateEvent = async (req, res, next) => {
         event.set(updData);
         await event.save();
 
+        if (event.users && event.users.length) {
+            const nPromises = event.users.map(
+                user => {
+                    const notification = new Notification({
+                        title: event.title,
+                        content: `Event "${event.title}" has been updated`,
+                        type: 'info',
+                        user
+                    });
+
+                    return notification.save();
+                }
+            );
+
+            await Promise.all(nPromises);
+        }
+
+
         res
             .status(200)
             .json({
@@ -160,7 +179,27 @@ exports.deleteEvent = async (req, res, next) => {
         const userId = req.userId;
 
         if (event.owner == userId) {
-            event.remove();
+            const promises = [
+                event.remove()
+            ];
+            const usersIds = event.users;
+
+            if (usersIds && usersIds.length) {
+                const nPromises = usersIds.map(user => {
+                    const notification = new Notification({
+                        title: event.title,
+                        content: `Event "${event.title}" has been deleted`,
+                        type: 'warning',
+                        user
+                    });
+
+                    return notification.save();
+                });
+
+                promises.push(...nPromises);
+            }
+
+            await Promise.all(promises);
 
             res
                 .status(200)
@@ -169,8 +208,24 @@ exports.deleteEvent = async (req, res, next) => {
                     eventId
                 });
         } else {
-            if (event.users.indexOf(userId)) {
-                event.removeUser(userId);
+            if (event.users.indexOf(userId) !== -1) {
+                const user = await User.findById(userId);
+                const removePromise = event.removeUser(userId);
+
+                const notification = new Notification({
+                    title: event.title,
+                    content: `User ${user.firstname} ${user.lastname} has left event "${event.title}"`,
+                    type: 'warning',
+                    user: event.owner
+                });
+
+                promises = [
+                    removePromise,
+                    user.removeEvent(eventId),
+                    notification.save()
+                ];
+
+                await Promise.all(promises);
 
                 res
                     .status(200)
@@ -208,9 +263,17 @@ exports.inviteUserToEvent = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
+        const notification = new Notification({
+            title: event.title,
+            content: `You have been invited to "${event.title}"`,
+            type: 'info',
+            user: userToInviteId
+        });
+
         await Promise.all([
             event.addUser(userToInviteId),
-            userToInvite.addEvent(eventId)
+            userToInvite.addEvent(eventId),
+            notification.save()
         ])
 
         res
@@ -246,9 +309,17 @@ exports.removeUserFromEvent = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
+        const notification = new Notification({
+            title: event.title,
+            content: `You have been removed from "${event.title}"`,
+            type: 'warning',
+            user: userToRemoveId
+        });
+
         await Promise.all([
             event.removeUser(userToRemoveId),
-            userToRemove.removeEvent(eventId)
+            userToRemove.removeEvent(eventId),
+            notification.save()
         ]);
 
         res

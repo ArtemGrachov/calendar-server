@@ -44,7 +44,8 @@ eventSchema.methods = {
             description: this.description,
             icon: this.icon,
             color: this.color,
-            users: this.users
+            users: this.users,
+            owner: this.owner
         }
     },
     async addUser(userId) {
