@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
-const eventsRoutes = require('./roytes/events');
+const eventsRoutes = require('./routes/events');
 
 app.use(authMiddleware);
 app.use('/auth', authRoutes);
@@ -48,5 +48,4 @@ mongoose.connect(config.db)
 )
 .catch(err => {
     console.log('Database connection error');
-    res.status(500);
 });
