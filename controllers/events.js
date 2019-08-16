@@ -222,17 +222,21 @@ exports.removeUserFromEvent = async (req, res, next) => {
 
         const userId = req.userId;
 
-        if (event.owner !== userId) {
+        if (event.owner != userId) {
             throw errorFactory(403, errors.NOT_AUTHORIZED);
         }
 
         const userToRemoveId = req.params.userId;
+        const userToRemove = await User.findById(userToRemoveId);
 
         if (event.users.indexOf(userToRemoveId) === -1) {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        event.removeUser(userToInviteId);
+        await Promise.all([
+            event.removeUser(userToRemoveId),
+            userToRemove.removeEvent(eventId)
+        ]);
 
         res
             .status(200)
