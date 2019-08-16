@@ -195,7 +195,10 @@ exports.inviteUserToEvent = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        await event.addUser(userToInviteId);
+        await Promise.all([
+            event.addUser(userToInviteId),
+            userToInvite.addEvent(eventId)
+        ])
 
         res
             .status(200)

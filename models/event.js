@@ -48,16 +48,11 @@ eventSchema.methods = {
         }
     },
     async addUser(userId) {
-        const user = await this.model('User').findById(userId);
-
-        await Promise.all([
-            this.updateOne({
-                $addToSet: {
-                    users: userId
-                }
-            }),
-            user.addEvent(this._id)
-        ])
+        await this.updateOne({
+            $addToSet: {
+                users: userId
+            }
+        })
     },
     async removeUser(userId) {
         await this.updateOne({
