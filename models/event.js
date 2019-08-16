@@ -24,10 +24,28 @@ const eventSchema = mongoose.Schema({
     color: {
         type: String,
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user'
+    },
     users: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }]
 });
+
+eventSchema.methods = {
+    getPublicFields() {
+        return {
+            start: this.start,
+            end: this.end,
+            title: this.title,
+            description: this.description,
+            icon: this.icon,
+            color: this.color,
+            users: this.users
+        }
+    }
+}
 
 module.exports = mongoose.model('Event', eventSchema);

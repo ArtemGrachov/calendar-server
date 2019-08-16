@@ -9,8 +9,10 @@ router.get('/', checkAuth, eventsController.getEvents);
 
 router.patch('/:eventId', checkAuth, eventsController.updateEvent);
 
-router.delete('/:eventId', checkAuth, eventsController.getOutFromEvent);
+router.delete('/:eventId', checkAuth, eventsController.deleteEvent);
 
-router.post('/invite', checkAuth, eventsController.inviteUserToEvent);
+router.post('/:eventId/invites', checkAuth, eventsController.inviteUserToEvent);
+
+router.delete('/:eventId/invites/:userId', checkAuth, eventsController.removeUserFromEvent);
 
 module.exports = router;
