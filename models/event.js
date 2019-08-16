@@ -37,6 +37,7 @@ const eventSchema = mongoose.Schema({
 eventSchema.methods = {
     getPublicFields() {
         return {
+            id: this._id,
             start: this.start,
             end: this.end,
             title: this.title,
@@ -59,12 +60,20 @@ eventSchema.pre('save', async function() {
         const user = await this.model('User')
             .findById(this.owner);
 
-        await user.updateOne({
-            $addToSet: {
-                'events': this._id
-            }
-        })
+        await user.addEvent(this._id);
     }
+})
+
+eventSchema.pre('remove', async function() {
+    const usersIds = [
+        this.owner,
+        ...this.users
+    ];
+    const users = await this.model('User').find({ _id: { $in: usersIds }});
+
+    const promises = users.map(user => user.removeEvent(this._id));
+
+    await Promise.all(promises);
 })
 
 module.exports = mongoose.model('Event', eventSchema);

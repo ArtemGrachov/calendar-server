@@ -136,7 +136,7 @@ exports.updateEvent = async (req, res, next) => {
 
 exports.deleteEvent = async (req, res, next) => {
     try {
-        const eventId = req.eventId;
+        const eventId = req.params.eventId;
         const event = await Event.findById(eventId);
 
         if (!event) {
@@ -145,7 +145,7 @@ exports.deleteEvent = async (req, res, next) => {
 
         const userId = req.userId;
 
-        if (event.owner === userId) {
+        if (event.owner == userId) {
             event.remove();
 
             res

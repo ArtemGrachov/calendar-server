@@ -27,4 +27,20 @@ const userSchema = mongoose.Schema({
     }]
 });
 
+userSchema.methods = {
+    async addEvent(eventId) {
+        await this.updateOne({
+            $addToSet: {
+                'events': eventId
+            }
+        })
+    },
+    async removeEvent(eventId) {
+        await this.updateOne({
+            $pull: {
+                'events': eventId
+            }
+        })
+    }
+}
 module.exports = mongoose.model('User', userSchema);
