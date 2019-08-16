@@ -28,6 +28,14 @@ const userSchema = mongoose.Schema({
 });
 
 userSchema.methods = {
+    getPublicFields() {
+        return {
+            id: this._id,
+            firstname: this.firstname,
+            lastname: this.lastname,
+            avatarUrl: this.avatarUrl
+        }
+    },
     async addEvent(eventId) {
         await this.updateOne({
             $addToSet: {

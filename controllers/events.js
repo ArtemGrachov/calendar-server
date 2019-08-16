@@ -42,8 +42,8 @@ exports.createEvent = async (req, res, next) => {
 
 exports.getEvents = async (req, res, next) => {
     try {
-        const start = req.params.start;
-        const end = req.params.end;
+        const start = req.query.start;
+        const end = req.query.end;
 
         if (!start || !end) {
             throw errorFactory(422, errors.INVALID_INPUT);
@@ -54,10 +54,22 @@ exports.getEvents = async (req, res, next) => {
             .populate({
                 path: 'events',
                 match: {
-                    start: { $lt: end },
-                    end: { $gt: start }
+                    start: { $lte: end },
+                    end: { $gte: start }
                 }
             });
+
+        const usersIds = Array.from(user.events.reduce(
+            (acc, curr) => {
+                curr.users.forEach(userId => {
+                    acc.add(userId.toString())
+                });
+                return acc;
+            }, new Set()
+        ));
+
+        const users = await User
+            .find({ _id: { $in: usersIds }});
 
         res
             .status(200)
@@ -67,7 +79,8 @@ exports.getEvents = async (req, res, next) => {
                     .events
                     .map(
                         event => event.getPublicFields()
-                    )
+                    ),
+                users: users.map(user => user.getPublicFields())
             });
     } catch(err) {
         next(err);
