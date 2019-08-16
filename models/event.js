@@ -48,10 +48,18 @@ eventSchema.methods = {
         }
     },
     async addUser(userId) {
-
+        this.updateOne({
+            $addToSet: {
+                users: userId
+            }
+        })
     },
     async removeUser(userId) {
-
+        this.updateOne({
+            $pull: {
+                users: userId
+            }
+        })
     }
 }
 

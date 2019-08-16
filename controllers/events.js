@@ -76,7 +76,7 @@ exports.getEvents = async (req, res, next) => {
 
 exports.updateEvent = async (req, res, next) => {
     try {
-        const eventId = req.eventId;
+        const eventId = req.params.eventId;
 
         const event = await Event.findById(eventId);
 
@@ -84,7 +84,7 @@ exports.updateEvent = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        if (events.users.indexOf(req.userId) === -1) {
+        if (event.owner != req.userId) {
             throw errorFactory(403, errors.NOT_AUTHORIZED);
         }
 
@@ -121,7 +121,8 @@ exports.updateEvent = async (req, res, next) => {
             updData.color = color;
         }
 
-        await event.set(updData);
+        event.set(updData);
+        await event.save();
 
         res
             .status(200)
