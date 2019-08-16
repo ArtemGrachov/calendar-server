@@ -184,7 +184,7 @@ exports.inviteUserToEvent = async (req, res, next) => {
 
         const userId = req.userId;
 
-        if (event.owner !== userId) {
+        if (event.owner != userId) {
             throw errorFactory(403, errors.NOT_AUTHORIZED);
         }
 
@@ -195,7 +195,7 @@ exports.inviteUserToEvent = async (req, res, next) => {
             throw errorFactory(404, errors.NOT_FOUND);
         }
 
-        event.addUser(userToInviteId);
+        await event.addUser(userToInviteId);
 
         res
             .status(200)
