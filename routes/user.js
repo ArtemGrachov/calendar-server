@@ -5,8 +5,6 @@ const userController = require('../controllers/user');
 
 router.get('/', checkAuth, userController.getMyData);
 
-router.get('/search', checkAuth, userController.searchUsers);
-
 router.patch('/', checkAuth, userController.updateUser);
 
 router.delete('/', checkAuth, userController.deleteUser);

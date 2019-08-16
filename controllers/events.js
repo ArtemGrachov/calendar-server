@@ -110,27 +110,27 @@ exports.updateEvent = async (req, res, next) => {
 
         const updData = {};
         
-        if (start) {
+        if (start != null) {
             updData.start = start;
         }
 
-        if (end) {
+        if (end != null) {
             updData.end = end;
         }
 
-        if (title) {
+        if (title != null) {
             updData.title = title;
         }
 
-        if (description) {
+        if (description != null) {
             updData.description = description;
         }
 
-        if (icon) {
+        if (icon != null) {
             updData.icon = icon;
         }
 
-        if (color) {
+        if (color != null) {
             updData.color = color;
         }
 
