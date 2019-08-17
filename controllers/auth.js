@@ -16,22 +16,34 @@ exports.registration = async (req, res, next) => {
 
     const validationErrors = [];
 
-    if (!validator.isEmail(email)) {
-        validationErrors.push('Invalid email');
+    if (email) {
+        if (!validator.isEmail(email)) {
+            validationErrors.push('Invalid email');
+        }
+    } else {
+        validationErrors.push('Email is required');
     }
-    if (!validator.isLength(password, { min: 8, max: 18 })) {
-        validationErrors.push('Invalid password');
-    };
+
+    if (password) {
+        if (!validator.isLength(password, { min: 8, max: 18 })) {
+            validationErrors.push('Invalid password');
+        };
+    } else {
+        validationErrors.push('Password is required');
+    }
+
     if (password !== passwordConfirmation) {
         validationErrors.push('Passwords are not equal');
     }
+
     if (!firstname) {
         validationErrors.push('First name is required');
     }
+
     if (!lastname) {
         validationErrors.push('Last name is required');
     }
-    
+
     if (validationErrors.length) {
         throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
     }

@@ -13,12 +13,32 @@ exports.createEvent = async (req, res, next) => {
         const icon = req.body.icon;
         const color = req.body.color;
 
-        if (!start || !end || !title) {
-            throw errorFactory(422, errors.INVALID_INPUT);
+        const validationErrors = [];
+
+        if (!title) {
+            validationErrors.push('Event title is required');
         }
 
-        start = new Date(start);
-        end = new Date(end);
+        if (!start) {
+            validationErrors.push('Start date is required');
+        }
+
+        if (!end) {
+            validationErrors.push('End date is required');
+        }
+
+        if (start && end) {
+            start = new Date(start);
+            end = new Date(end);
+
+            if (start <= end) {
+                validationErrors.push('Invalid dates');
+            }
+        }
+
+        if (validationErrors.length) {
+            throw errorFactory(422, errors.INVALID_INPUT);
+        }
 
         const event = await new Event({
             start,
