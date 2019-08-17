@@ -5,5 +5,6 @@ module.exports = {
     SERVER_ERROR: 'Server error',
     INVALID_INPUT: 'Invalid input',
     EMAIL_ALREADY_REGISTERED: 'This email is already registered',
-    INCORRECT_EMAIL_OR_PASSWORD: 'Incorrect email or password'
+    INCORRECT_EMAIL_OR_PASSWORD: 'Incorrect email or password',
+    INVALID_TOKEN: 'Invalid token'
 };

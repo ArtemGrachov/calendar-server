@@ -62,12 +62,12 @@ exports.registration = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
-    const email = req.body.email;
-    const password = req.body.password;
-
-    const user = await User.findOne({ email });
-
     try {
+        const email = req.body.email;
+        const password = req.body.password;
+    
+        const user = await User.findOne({ email });
+
         if (!user) {
             throw errorFactory(401, errors.INCORRECT_EMAIL_OR_PASSWORD);
         }
@@ -78,15 +78,11 @@ exports.login = async (req, res, next) => {
             throw errorFactory(401, errors.INCORRECT_EMAIL_OR_PASSWORD);
         }
 
-        const token = jwt.sign(
-            { userId: user._id.toString() },
-            config.jwtKey,
-            { expiresIn: '1h' }
-        );
+        const tokens = user.getAuthTokens();
 
         res
-        .status(200)
-        .json({ token });
+            .status(200)
+            .json(tokens);
     } catch (err) {
         next(err);
     }
@@ -129,6 +125,39 @@ exports.changePassword = async (req, res, next) => {
                 message: 'Password updated successfully'
             })
     } catch(err) {
+        next(err);
+    }
+}
+
+exports.refreshToken = async (req, res, next) => {
+    try {
+        const refreshToken = req.body.refreshToken;
+
+        if (!refreshToken) {
+            throw errorFactory(401, errors.INVALID_TOKEN);
+        }
+
+        const decodedToken = jwt.verify(refreshToken, config.jwtRefreshKey);
+
+        if (!decodedToken) {
+            throw errorFactory(401, errors.INVALID_TOKEN);
+        }
+
+        const tokenUserId = decodedToken.userId;
+
+        if (tokenUserId === req.userId) {
+            const user = await User.findById(tokenUserId);
+
+            const tokens = user.getAuthTokens();
+
+            res
+                .status(200)
+                .json(tokens);
+        } else {
+            throw errorFactory(401, errors.INVALID_TOKEN);
+        }
+
+    } catch (err) {
         next(err);
     }
 }

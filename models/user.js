@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const config = require('../configs/main');
 
 const userSchema = mongoose.Schema({
     email: {
@@ -77,6 +79,24 @@ userSchema.methods = {
             }
         })
     },
+    getAuthTokens() {
+        const token = jwt.sign(
+            { userId: this._id.toString() },
+            config.jwtKey,
+            { expiresIn: config.tokenLife }
+        );
+
+        const refreshToken = jwt.sign(
+            { userId: this._id.toString() },
+            config.jwtRefreshKey,
+            { expiresIn: config.refreshTokenLige }
+        );
+
+        return {
+            token,
+            refreshToken
+        }
+    }
 }
 
 userSchema.pre('remove', async function() {
