@@ -85,6 +85,7 @@ exports.getEvents = async (req, res, next) => {
                 curr.users.forEach(userId => {
                     acc.add(userId.toString())
                 });
+                acc.add(curr.owner);
                 return acc;
             }, new Set()
         ));
