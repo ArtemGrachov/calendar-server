@@ -46,16 +46,6 @@ notificationSchema.pre('remove', async function() {
         .findById(this.user);
 
     await user.removeNotification(this._id);
-
-    const usersIds = [
-        this.owner,
-        ...this.users
-    ];
-    const users = await this.model('User').find({ _id: { $in: usersIds }});
-
-    const promises = users.map(user => user.removeEvent(this._id));
-
-    await Promise.all(promises);
 });
 
 module.exports = mongoose.model('Notification', notificationSchema);

@@ -28,7 +28,7 @@ exports.deleteNotification = async (req, res, next) => {
         const userId = req.userId;
         const notificationId = req.params.notificationId;
 
-        const notification = Notification.findById(notificationId);
+        const notification = await Notification.findById(notificationId);
 
         if (!notification) {
             throw errorFactory(404, errors.NOT_FOUND);
@@ -37,6 +37,15 @@ exports.deleteNotification = async (req, res, next) => {
         if (notification.user != userId) {
             throw errorFactory(403, errors.NOT_AUTHORIZED);
         }
+
+        await notification.remove();
+
+        res
+            .status(200)
+            .json({
+                message: 'Notification deleted successfully',
+                id: notificationId
+            });
     } catch(err) {
         next(err);
     }
