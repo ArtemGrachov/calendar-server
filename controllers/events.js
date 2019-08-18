@@ -31,13 +31,13 @@ exports.createEvent = async (req, res, next) => {
             start = new Date(start);
             end = new Date(end);
 
-            if (start <= end) {
+            if (start >= end) {
                 validationErrors.push('Invalid dates');
             }
         }
 
         if (validationErrors.length) {
-            throw errorFactory(422, errors.INVALID_INPUT);
+            throw errorFactory(422, errors.INVALID_INPUT, validationErrors);
         }
 
         const event = await new Event({

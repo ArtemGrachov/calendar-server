@@ -16,7 +16,7 @@ exports.getNotifications = async (req, res, next) => {
                 message: 'Notifications fetched successfully',
                 notifications: user
                     .notifications
-                    .map(notification => notification.getPublicFields)
+                    .map(notification => notification.getPublicFields())
             });
     } catch(err) {
         next(err);
