@@ -251,7 +251,8 @@ exports.deleteEvent = async (req, res, next) => {
                 res
                     .status(200)
                     .json({
-                        message: 'You successfully left the event'
+                        message: 'You successfully left the event',
+                        eventId
                     });
             } else {
                 throw errorFactory(404, errors.NOT_FOUND);
@@ -301,6 +302,7 @@ exports.inviteUserToEvent = async (req, res, next) => {
             .status(200)
             .json({
                 message: 'User successfully invited to event',
+                eventId,
                 userId: userToInviteId
             });
     } catch(err) {
@@ -347,6 +349,7 @@ exports.removeUserFromEvent = async (req, res, next) => {
             .status(200)
             .json({
                 message: 'User successfully removed from event',
+                eventId,
                 userId: userToRemoveId
             });
     } catch(err) {
