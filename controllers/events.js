@@ -229,34 +229,55 @@ exports.deleteEvent = async (req, res, next) => {
                     eventId
                 });
         } else {
-            if (event.users.indexOf(userId) !== -1) {
-                const user = await User.findById(userId);
-                const removePromise = event.removeUser(userId);
+            throw errorFactory(403, errors.NOT_AUTHORIZED);
+        }
+    } catch(err) {
+        next(err);
+    }
+}
 
-                const notification = new Notification({
-                    title: event.title,
-                    content: `User ${user.firstname} ${user.lastname} has left event "${event.title}"`,
-                    type: 'warning',
-                    user: event.owner
+exports.leaveEvent = async (req, res, next) => {
+    try {
+        const eventId = req.params.eventId;
+        const event = await Event.findById(eventId);
+
+        if (!event) {
+            throw errorFactory(404, errors.NOT_FOUND);
+        }
+
+        const userId = req.userId;
+
+        if (event.owner === userId) {
+            throw errorFactory(403, errors.NOT_AUTHORIZED);            
+        }
+
+        if (event.users.indexOf(userId) !== -1) {
+            const user = await User.findById(userId);
+            const removePromise = event.removeUser(userId);
+
+            const notification = new Notification({
+                title: event.title,
+                content: `User ${user.firstname} ${user.lastname} has left event "${event.title}"`,
+                type: 'warning',
+                user: event.owner
+            });
+
+            promises = [
+                removePromise,
+                user.removeEvent(eventId),
+                notification.save()
+            ];
+
+            await Promise.all(promises);
+
+            res
+                .status(200)
+                .json({
+                    message: 'You successfully left the event',
+                    eventId
                 });
-
-                promises = [
-                    removePromise,
-                    user.removeEvent(eventId),
-                    notification.save()
-                ];
-
-                await Promise.all(promises);
-
-                res
-                    .status(200)
-                    .json({
-                        message: 'You successfully left the event',
-                        eventId
-                    });
-            } else {
-                throw errorFactory(404, errors.NOT_FOUND);
-            }
+        } else {
+            throw errorFactory(404, errors.NOT_FOUND);
         }
     } catch(err) {
         next(err);

@@ -15,4 +15,6 @@ router.post('/:eventId/invites', checkAuth, eventsController.inviteUserToEvent);
 
 router.delete('/:eventId/invites/:userId', checkAuth, eventsController.removeUserFromEvent);
 
+router.delete('/:eventId/invites/', checkAuth, eventsController.leaveEvent);
+
 module.exports = router;
