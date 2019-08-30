@@ -5,7 +5,7 @@ const errors = require('./configs/errors');
 
 const config = require('./configs/main');
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
@@ -22,13 +22,15 @@ const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');
 const eventsRoutes = require('./routes/events');
 const userRoutes = require('./routes/user');
-const notificationsController = require('./routes/notifications');
+const notificationsRoutes = require('./routes/notifications');
+const usersRoutes = require('./routes/users');
 
 app.use(authMiddleware);
 app.use('/auth', authRoutes);
 app.use('/events', eventsRoutes);
 app.use('/user', userRoutes);
-app.use('/notifications', notificationsController);
+app.use('/notifications', notificationsRoutes);
+app.use('/users', usersRoutes);
 
 app.use((err, req, res, next) => {
     console.log(err);
