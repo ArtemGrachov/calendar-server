@@ -1,8 +1,8 @@
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const errors = require('./configs/errors');
-// const upload = require('./middlewares/upload');
 const config = require('./configs/main');
 
 const PORT = process.env.PORT || 3000;
@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(bodyParser.json());
-// app.use(upload.imageUpload.single('avatar'));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,6 +17,8 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
 });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');

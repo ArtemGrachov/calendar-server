@@ -28,7 +28,7 @@ exports.imageFilter = (req, file, cb) => {
     }
 };
 
-exports.imageUpload = multer({
+const imageUpload = multer({
     storage,
     fileFilter: this.imageFilter,
     limits: {
@@ -36,10 +36,14 @@ exports.imageUpload = multer({
     }
 });
 
-exports.errorHandler = err => {
+const errorHandler = (err, next) => {
     if (err) {
         err.statusCode = 422;
         next(err);
     }
     next();
 };
+
+exports.images = (req, res, next) => {
+    imageUpload.single('avatar')(req, res, err => errorHandler(err, next));
+}

@@ -9,8 +9,7 @@ router.get('/', checkAuth, userController.getMyData);
 router.patch(
     '/',
     checkAuth,
-    (req, res, next) =>
-        upload.imageUpload.single('avatar')(req, res, upload.errorHandler),
+    upload.images,
     userController.updateUser
 );
 
