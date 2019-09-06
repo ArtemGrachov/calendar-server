@@ -4,5 +4,6 @@ module.exports = {
     tokenLife: '1h',
     refreshTokenLige: '7d',
     db: `mongodb://${process.env.DB || 'localhost:27017/calendar'}`,
-    allowedImageTypes: ['png', 'jpg', 'jpeg']
+    allowedImageTypes: ['png', 'jpg', 'jpeg'],
+    uploadImageSizeLimit: 100 * 1024
 }

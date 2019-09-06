@@ -32,7 +32,7 @@ const imageUpload = multer({
     storage,
     fileFilter: this.imageFilter,
     limits: {
-        fileSize: 100 * 1024
+        fileSize: config.uploadImageSizeLimit
     }
 });
 

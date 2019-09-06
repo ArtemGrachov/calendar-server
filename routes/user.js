@@ -6,12 +6,11 @@ const upload = require('../middlewares/upload');
 
 router.get('/', checkAuth, userController.getMyData);
 
-router.patch(
-    '/',
-    checkAuth,
-    upload.images,
-    userController.updateUser
-);
+router.patch('/', checkAuth, userController.updateUser);
+
+router.post('/avatar', checkAuth, upload.images, userController.uploadAvatar);
+
+router.delete('/avatar', checkAuth, userController.deleteAvatar);
 
 router.delete('/', checkAuth, userController.deleteUser);
 
