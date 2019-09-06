@@ -9,16 +9,8 @@ router.get('/', checkAuth, userController.getMyData);
 router.patch(
     '/',
     checkAuth,
-    // upload.imageUpload.single('avatar'),
-    (req, res, next) => {
-        upload.imageUpload.single('avatar')(req, res, err => {
-            if (err) {
-                err.statusCode = 422;
-                next(err);
-            }
-            next();
-        });
-    },
+    (req, res, next) =>
+        upload.imageUpload.single('avatar')(req, res, upload.errorHandler),
     userController.updateUser
 );
 

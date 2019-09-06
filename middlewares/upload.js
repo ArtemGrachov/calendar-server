@@ -35,3 +35,11 @@ exports.imageUpload = multer({
         fileSize: 100 * 1024
     }
 });
+
+exports.errorHandler = err => {
+    if (err) {
+        err.statusCode = 422;
+        next(err);
+    }
+    next();
+});
