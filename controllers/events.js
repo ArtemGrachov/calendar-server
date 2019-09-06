@@ -317,7 +317,7 @@ exports.inviteUserToEvent = async (req, res, next) => {
             event.addUser(userToInviteId),
             userToInvite.addEvent(eventId),
             notification.save()
-        ])
+        ]);
 
         res
             .status(200)

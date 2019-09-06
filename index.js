@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const errors = require('./configs/errors');
-
+// const upload = require('./middlewares/upload');
 const config = require('./configs/main');
 
 const PORT = process.env.PORT || 3000;
@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(bodyParser.json());
+// app.use(upload.imageUpload.single('avatar'));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const uploadDelete = require('../utils/upload-delete');
 
 exports.getMyData = async (req, res, next) => {
     try {
@@ -21,8 +22,7 @@ exports.updateUser = async (req, res, next) => {
     try {
         const firstname = req.body.firstname;
         const lastname = req.body.lastname;
-        const avatarUrl = req.body.avatarUrl;
-
+        const avatar = req.file;
         const updData = { };
 
         if (firstname != null) {
@@ -33,13 +33,19 @@ exports.updateUser = async (req, res, next) => {
             updData.lastname = lastname;
         }
 
-        if (avatarUrl != null) {
-            updData.avatarUrl = avatarUrl;
+        if (avatar) {
+            updData.avatarUrl = avatar.filename;
         }
 
         const user = await User.findById(req.userId);
 
+        const prevAvatar = user.avatarUrl;
+
         user.set(updData);
+
+        if (prevAvatar) {
+            uploadDelete(prevAvatar);
+        }
 
         await user.save();
 

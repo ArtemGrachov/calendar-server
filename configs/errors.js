@@ -6,5 +6,6 @@ module.exports = {
     INVALID_INPUT: 'Invalid input',
     EMAIL_ALREADY_REGISTERED: 'This email is already registered',
     INCORRECT_EMAIL_OR_PASSWORD: 'Incorrect email or password',
-    INVALID_TOKEN: 'Invalid token'
+    INVALID_TOKEN: 'Invalid token',
+    ONLY_IMAGES_ALLOWED: 'Only images allowed'
 };
