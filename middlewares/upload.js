@@ -42,4 +42,4 @@ exports.errorHandler = err => {
         next(err);
     }
     next();
-});
+};
