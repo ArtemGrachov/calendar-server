@@ -19,7 +19,7 @@ const eventSchema = mongoose.Schema({
     },
     icon: {
         type: String,
-        enum: eventIcons
+        enum: ['', ...eventIcons]
     },
     color: {
         type: String,
