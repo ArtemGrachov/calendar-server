@@ -175,7 +175,7 @@ exports.updateEvent = async (req, res, next) => {
                         user,
                         {
                             type: wsEvents.WS_EVENT_UPDATED,
-                            notification,
+                            notification: notification.getPublicFields(),
                             event: event.getPublicFields()
                         }
                     );
@@ -229,7 +229,7 @@ exports.deleteEvent = async (req, res, next) => {
                         user,
                         {
                             type: wsEvents.WS_EVENT_DELETED,
-                            notification,
+                            notification: notification.getPublicFields(),
                             eventId
                         }
                     );
@@ -286,7 +286,7 @@ exports.leaveEvent = async (req, res, next) => {
                 event.owner,
                 {
                     type: wsEvents.WS_USER_LEAVE_EVENT,
-                    notification,
+                    notification: notification.getPublicFields(),
                     eventId,
                     userId
                 }
@@ -347,7 +347,7 @@ exports.inviteUserToEvent = async (req, res, next) => {
             userToInviteId,
             {
                 type: wsEvents.WS_USER_INVITED_TO_EVENT,
-                notification,
+                notification: notification.getPublicFields(),
                 event: event.getPublicFields()
             }
         );
@@ -403,7 +403,7 @@ exports.removeUserFromEvent = async (req, res, next) => {
             userToRemoveId,
             {
                 type: wsEvents.WS_USER_REMOVED_FROM_EVENT,
-                notification,
+                notification: notification.getPublicFields(),
                 eventId
             }
         );
