@@ -3,6 +3,8 @@ const User = require('../models/user');
 const Notification = require('../models/notification');
 const errorFactory = require('../utils/error-factory');
 const errors = require('../configs/errors');
+const socket = require('../socket');
+const wsEvents = require('../configs/ws-events');
 
 exports.createEvent = async (req, res, next) => {
     try {
@@ -169,6 +171,15 @@ exports.updateEvent = async (req, res, next) => {
                         user
                     });
 
+                    socket.sendMessage(
+                        user,
+                        {
+                            type: wsEvents.WS_EVENT_UPDATED,
+                            notification,
+                            event: event.getPublicFields()
+                        }
+                    );
+
                     return notification.save();
                 }
             );
@@ -214,6 +225,15 @@ exports.deleteEvent = async (req, res, next) => {
                         user
                     });
 
+                    socket.sendMessage(
+                        user,
+                        {
+                            type: wsEvents.WS_EVENT_DELETED,
+                            notification,
+                            eventId
+                        }
+                    );
+
                     return notification.save();
                 });
 
@@ -248,7 +268,7 @@ exports.leaveEvent = async (req, res, next) => {
         const userId = req.userId;
 
         if (event.owner === userId) {
-            throw errorFactory(403, errors.NOT_AUTHORIZED);            
+            throw errorFactory(403, errors.NOT_AUTHORIZED);
         }
 
         if (event.users.indexOf(userId) !== -1) {
@@ -261,6 +281,16 @@ exports.leaveEvent = async (req, res, next) => {
                 type: 'warning',
                 user: event.owner
             });
+
+            socket.sendMessage(
+                event.owner,
+                {
+                    type: wsEvents.WS_USER_LEAVE_EVENT,
+                    notification,
+                    eventId,
+                    userId
+                }
+            );
 
             promises = [
                 removePromise,
@@ -313,6 +343,15 @@ exports.inviteUserToEvent = async (req, res, next) => {
             user: userToInviteId
         });
 
+        socket.sendMessage(
+            userToInviteId,
+            {
+                type: wsEvents.WS_USER_INVITED_TO_EVENT,
+                notification,
+                event: event.getPublicFields()
+            }
+        );
+
         await Promise.all([
             event.addUser(userToInviteId),
             userToInvite.addEvent(eventId),
@@ -359,6 +398,15 @@ exports.removeUserFromEvent = async (req, res, next) => {
             type: 'warning',
             user: userToRemoveId
         });
+
+        socket.sendMessage(
+            userToRemoveId,
+            {
+                type: wsEvents.WS_USER_REMOVED_FROM_EVENT,
+                notification,
+                eventId
+            }
+        );
 
         await Promise.all([
             event.removeUser(userToRemoveId),

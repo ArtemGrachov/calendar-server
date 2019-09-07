@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const errors = require('./configs/errors');
 const config = require('./configs/main');
+const socket = require('./socket');
 
 const PORT = process.env.PORT || 3000;
 
@@ -46,15 +47,17 @@ app.use((err, req, res, next) => {
         .json(resError);
 });
 
-mongoose.connect(config.db)
-.then(
-    () => {
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
-    }
-)
-.catch(err => {
-    console.log(err);
-    console.log('Database connection error');
-});
+mongoose
+    .connect(config.db)
+    .then(
+        () => {
+            const server = app.listen(PORT, () => {
+                console.log(`Server running on port ${PORT}`);
+            });
+            socket.init(server);
+        }
+    )
+    .catch(err => {
+        console.log(err);
+        console.log('Database connection error');
+    });
