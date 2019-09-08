@@ -20,8 +20,9 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    avatarUrl: {
-        type: String
+    avatar: {
+        url: String,
+        publicId: String
     },
     events: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -39,7 +40,7 @@ userSchema.methods = {
             id: this._id,
             firstname: this.firstname,
             lastname: this.lastname,
-            avatarUrl: this.avatarUrl
+            avatarUrl: this.avatar ? this.avatar.url : null
         }
     },
     getAllFields() {
@@ -47,7 +48,7 @@ userSchema.methods = {
             id: this._id,
             firstname: this.firstname,
             lastname: this.lastname,
-            avatarUrl: this.avatarUrl,
+            avatarUrl: this.avatar ? this.avatar.url : null,
             email: this.email
         }
     },

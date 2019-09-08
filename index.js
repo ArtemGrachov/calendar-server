@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cloudinary = require('cloudinary').v2;
 const errors = require('./configs/errors');
 const config = require('./configs/main');
 const socket = require('./socket');
@@ -20,6 +22,12 @@ app.use((req, res, next) => {
 });
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 const authMiddleware = require('./middlewares/auth');
 const authRoutes = require('./routes/auth');

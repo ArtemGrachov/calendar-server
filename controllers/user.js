@@ -2,6 +2,7 @@ const User = require('../models/user');
 const uploadDelete = require('../utils/upload-delete');
 const errorFactory = require('../utils/error-factory');
 const errors = require('../configs/errors');
+const cloudinaryPromise = require('../utils/cloudinary-promise');
 
 exports.getMyData = async (req, res, next) => {
     try {
@@ -61,14 +62,21 @@ exports.uploadAvatar = async (req, res, next) => {
 
         const user = await User.findById(req.userId);
 
-        const prevAvatar = user.avatarUrl;
+        const result = await cloudinaryPromise.upload(`uploads/${avatar.filename}`);
+
+        const prevAvatar = user.avatar ? user.avatar.publicId : null;
 
         user.set({
-            avatarUrl: avatar.filename
+            avatar: {
+                url: result.secure_url,
+                publicId: result.public_id
+            }
         });
 
+        uploadDelete(avatar.filename);
+
         if (prevAvatar) {
-            uploadDelete(prevAvatar);
+            await cloudinaryPromise.delete(prevAvatar);
         }
 
         await user.save();
@@ -88,15 +96,13 @@ exports.deleteAvatar = async (req, res, next) => {
     try {
         const user = await User.findById(req.userId);
 
-        const prevAvatar = user.avatarUrl;
+        const prevAvatar = user.avatar ? user.avatar.publicId : null;
 
         if (prevAvatar) {
-            uploadDelete(prevAvatar);
+            await cloudinaryPromise.delete(prevAvatar);
         }
 
-        user.set({
-            avatarUrl: null
-        });
+        user.set('avatar', null);
 
         await user.save();
 
