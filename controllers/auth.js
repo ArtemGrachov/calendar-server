@@ -157,17 +157,13 @@ exports.refreshToken = async (req, res, next) => {
 
         const tokenUserId = decodedToken.userId;
 
-        if (tokenUserId === req.userId) {
-            const user = await User.findById(tokenUserId);
+        const user = await User.findById(tokenUserId);
 
-            const tokens = user.getAuthTokens();
+        const tokens = user.getAuthTokens();
 
-            res
-                .status(200)
-                .json(tokens);
-        } else {
-            throw errorFactory(401, errors.INVALID_TOKEN);
-        }
+        res
+            .status(200)
+            .json(tokens);
 
     } catch (err) {
         next(err);

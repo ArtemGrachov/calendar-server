@@ -46,7 +46,13 @@ app.use('/users', usersRoutes);
 app.use((err, req, res, next) => {
     console.log(err);
 
-    const resError = {message: err.statusCode ? err.message : errors.SERVER_ERROR };
+    if (err.name === 'JsonWebTokenError') {
+        err.statusCode = 401;
+        err.message = errors.INVALID_TOKEN;
+    };
+
+    const resError = { message: err.statusCode ? err.message : errors.SERVER_ERROR };
+
     if (err.data) {
         resError.data = err.data;
     };
